@@ -1,95 +1,91 @@
 #include "sort.h"
-
 /**
- * swap_left -swap two nodes right left position
- * @list: list
- *Return: NULL
+ * swap_backward -swap two nodes right left position
+ * @c: list
  *
  **/
-void swap_left(listint_t *list)
+void swap_backward(listint_t *c)
 {
 	listint_t *tmp, *head;
 
-	while (list->prev != NULL)
+	while (c->prev != NULL)
 	{
-		if (list->n < list->prev->n)
+		if (c->n < c->prev->n)
 		{
-			tmp = list->prev->prev;
-			list->prev->next = list->next;
-			list->next = list->prev;
-			list->prev->prev = list;
-			list->prev = tmp;
-			list->next->next->prev = list->next;
+			tmp = c->prev->prev;
+			c->prev->next = c->next;
+			c->next = c->prev;
+			c->prev->prev = c;
+			c->prev = tmp;
+			c->next->next->prev = c->next;
 			if (tmp != NULL)
-				tmp->next = list;
-			head = list;
+				tmp->next = c;
+			head = c;
 			while (head->prev != NULL)
 				head = head->prev;
 			print_list(head);
 		}
 		else
-			list = list->prev;
+			c = c->prev;
 	}
 }
-
 /**
- * swap_right -swap two nodes left rigth position
- * @l: list
- * Return: Null
+ * swap_forward -swap two nodes left rigth position
+ * @c: list
+ *
  **/
-void swap_right(listint_t *l)
+void swap_forward(listint_t *c)
 {
 	listint_t *tmp, *head;
 
-	tmp = l->prev;
+	tmp = c->prev;
 
 	if (tmp != NULL)
 	{
-		tmp->next = l->next;
-		l->next->prev = tmp;
+		tmp->next = c->next;
+		c->next->prev = tmp;
 	}
 	else
-		l->next->prev = NULL;
-	l->prev = l->next;
-	if (l->next->next != NULL)
+		c->next->prev = NULL;
+	c->prev = c->next;
+	if (c->next->next != NULL)
 	{
-		l->next = l->next->next;
-		l->prev->next = l;
-		l->next->prev = l;
+		c->next = c->next->next;
+		c->prev->next = c;
+		c->next->prev = c;
 	}
 	else
 	{
-		l->next->next = l;
-		l->next = NULL;
+		c->next->next = c;
+		c->next = NULL;
 	}
-	head = l;
+	head = c;
 	while (head->prev != NULL)
 		head = head->prev;
 	print_list(head);
-	swap_left(l->prev);
+	swap_backward(c->prev);
 }
-
 /**
- * insertion_sort_list -sorts a doubly linked list in ascending order
+ * insertion_sort_list -sort a doubly linked list with insert algorithm
  * @list: list
- * Return: NULL
- */
+ *
+ **/
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *l;
+	listint_t *c;
 
 	if ((list == NULL) || (*list == NULL) || ((*list)->next == NULL))
 		return;
-	l = *list;
+	c = *list;
 
-	while (l->next != NULL)
+	while (c->next != NULL)
 	{
-		if (l->n > l->next->n)
+		if (c->n > c->next->n)
 		{
-			swap_right(l);
+			swap_forward(c);
 		}
 		else
-			l = l->next;
+			c = c->next;
 	}
 	while ((*list)->prev != NULL)
 		*list = (*list)->prev;
