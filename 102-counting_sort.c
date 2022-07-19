@@ -1,54 +1,75 @@
 #include "sort.h"
-#include "stdlib.h"
 
 /**
- * counting_sort - sorts an array of integers in ascending order using the
- * Counting sort algorithm
- * @array: array to sort
- * @size: size of the array to sort
- *
- * Return: void
- */
+* findmax - Finds the maximum value in an array
+* @array: array to find max value of
+* @size: Size of array
+* Return: Largest value
+*/
+
+int findmax(int *array, size_t size)
+{
+	int i, max = 0;
+
+	for (i = 0; i < (int)size; i++)
+	{
+		if (max < array[i])
+			max = array[i];
+	}
+	return (max);
+}
+
+/**
+* count - Counts number of occurences of value in an array
+* @array: Array to count values of
+* @size: Size of array
+* @val: Value to count in the array
+* Return: Count of va
+*/
+
+int count(int *array, size_t size, int val)
+{
+	int c = 0, i;
+
+	for (i = 0; i < (int)size; i++)
+	{
+		if (array[i] == val)
+			c++;
+	}
+	return (c);
+}
+
+/**
+* counting_sort - sorts array using counting algorithm
+* @array: Array to sort
+* @size: Size of array
+*/
+
 void counting_sort(int *array, size_t size)
 {
-	int i, max;
-	int *count = NULL, *copy = NULL;
-	size_t j, temp, total = 0;
-
+	int max, *red, i, *output, j;
 
 	if (array == NULL || size < 2)
 		return;
-	copy = malloc(sizeof(int) * size);
-	if (copy == NULL)
+	max = findmax(array, size);
+	output = malloc(sizeof(int) * (int)size);
+	red = malloc(sizeof(int) * (max + 1));
+	if (red == NULL || output == NULL)
 		return;
-	for (j = 0, max = 0; j < size; j++)
+	for (i = j = 0; i < max + 1; i++)
 	{
-		copy[j] = array[j];
-		if (array[j] > max)
-			max = array[j];
+		j += count(array, size, i);
+		red[i] = j;
 	}
-	count = malloc(sizeof(int) * (max + 1));
-	if (count == NULL)
+	print_array(red, max + 1);
+	for (i = 0; i < (int)size; i++)
 	{
-		free(copy);
-		return;
+		output[red[array[i]] - 1] = array[i];
+		red[array[i]] -= 1;
 	}
-	for (i = 0; i <= max; i++)
-		count[i] = 0;
-	for (j = 0; j < size; j++)
-		count[array[j]] += 1;
-	for (i = 0; i <= max; i++)
-	{
-		temp = count[i];
-		count[i] = total;
-		total += temp;
-	}
-	for (j = 0; j < size; j++)
-	{
-		array[count[copy[j]]] = copy[j];
-		count[copy[j]] += 1;
-	}
-	print_array(count, max + 1);
-	free(count);
-	free(copy);
+	for (i = 0; i < (int)size; i++)
+		array[i] = output[i];
+
+	free(output);
+	free(red);
 }
